@@ -1,0 +1,162 @@
+Here’s a complete, organized snapshot of your SkillSwap project setup, focusing on how to run it via Expo Go, how theming/auth/navigation work, the Supabase integration, and how to optionally build later.
+
+Project identity and runtime
+
+Name and slug
+
+App name: SkillSwap. Slug is typically “skillswap” to match share links and Expo project identity.
+
+Entry and router
+
+Entry: expo-router/entry. Expo Router organizes screens under app/ folders for file-based routing.
+
+Platforms
+
+Targets iOS, Android, and web in development via Expo Go or the web bundler; current path focuses on Android/iOS usage via Expo Go.
+
+Start command
+
+Use npx expo start --tunnel to share a live dev link for demos and testing.
+
+Theming and UI
+
+System theme support
+
+useAppTheme drives light/dark palette selection. The app adapts to the device theme on first render and across navigations.
+
+Centralized colors
+
+Colors provides palette keys for background, text, border, tint, inputs, and muted text so screens remain consistent.
+
+Tabs styling
+
+The tab bar uses the theme palette for active/inactive icons, background, border, and labels with HapticTab for tap feedback.
+
+Navigation and screens
+
+Root tabs
+
+Tabs include Profile, Matches, Book Session, Browse & Book, and Inbox. Initial route is Profile to land users on account context.
+
+Route guards
+
+(tabs)/_layout ensures that navigating to the tabs group without a child routes to /(tabs)/profile. This avoids empty screens.
+
+Browse & Book
+
+Renders a themed list of future availability slots from other users, with “Book,” booking status, and “Open meeting” actions. Live updates via Supabase channel subscriptions keep the list in sync.
+
+Authentication and sessions
+
+Auth screen
+
+Email/password sign-up/sign-in via Supabase. On session detected, routes to /(tabs)/profile and prevents stale restored state.
+
+Session handling
+
+Screens that depend on userId await supabase.auth.getSession() before rendering sensitive content or badges, minimizing blank or misrouted screens on Android vs iOS cold-start differences.
+
+Profile and skills
+
+Profile data
+
+Loads display_name, email, and bio; supports inline editing with Save Profile action.
+
+Skills summary
+
+Aggregates all skills to compute offered (user_offers) and wanted (user_wants) titles. Reacts to live DB changes for inserts/updates/deletes.
+
+Ratings
+
+Computes average rating and count from session_feedback where the current user is ratee_id; updates in real time via subscription.
+
+Theme preference controls (optional)
+
+Allows switching between light, dark, and system modes if you choose to expose it.
+
+Messaging and inbox
+
+Inbox badge
+
+useUnreadCount(userId) computes unread items and displays a numeric badge on the Inbox tab, capped visually at “99+” for large counts.
+
+Supabase integration
+
+Environment
+
+Supabase URL: https://ztnpqdefopmqalhmtrzp.supabase.co. Anon key provided via local .env during development and via EAS secrets when building later.
+
+Tables referenced
+
+profiles (id, display_name, email, bio)
+
+skills (id, title)
+
+user_offers (user_id, skill_id)
+
+user_wants (user_id, skill_id)
+
+availability_slots (id, user_id, start_at, end_at, timezone, notes)
+
+bookings (id, slot_id, booker_id)
+
+session_feedback (ratee_id, rating)
+
+Live updates
+
+Real-time subscriptions on availability_slots, bookings, user_offers, user_wants, skills, and session_feedback keep UI in sync without manual refresh.
+
+Development and sharing
+
+Expo Go link (free)
+
+Use Tunnel: npx expo start --tunnel. Share the QR or “Open in Expo Go” link. Keep the terminal running for the link to remain active.
+
+LAN notes
+
+If Android fails on LAN due to network isolation, Tunnel resolves it. For remote testers, Tunnel is the recommended mode.
+
+Build and distribution options
+
+Current plan
+
+You’re sticking with Expo Go live sharing for now; no changes needed to revert any config. Everything done so far is compatible with this flow.
+
+Optional future: Android APK (no Play Store cost)
+
+When ready, keep eas.json and app.config.ts in the repo and run an EAS build to produce an installable APK. Users can sideload it without Play Store. iOS public distribution still requires Apple Developer membership.
+
+Housekeeping and tips
+
+Environment management
+
+For dev, add a .env with SUPABASE_URL and SUPABASE_ANON_KEY so Expo’s dynamic config can embed them into Constants.expoConfig.extra at runtime.
+
+Versioning
+
+Maintain app version (e.g., 1.0.0). If/when you build APKs later, increment android.versionCode for updates to install over previous builds.
+
+Permissions
+
+Keep only required permissions (e.g., camera if scanning QR codes); fewer permissions reduce user friction and store review flags later.
+
+Error visibility
+
+Consider adding crash reporting (e.g., Sentry) later if you move to installable builds, to catch production issues.
+
+Day-to-day usage
+
+Start the app for sharing
+
+npx expo start --tunnel
+
+Troubleshoot connectivity
+
+If a tester can’t open the link, ensure Expo Go is updated, try the clickable “Open in Expo Go” link instead of scanning, and if necessary restart with cache clear: npx expo start -c --tunnel.
+
+Keep your laptop awake
+
+Use a “don’t sleep” setting during demos so the link stays live.
+
+This setup gives you a stable, theme-aware, Supabase-backed mobile app that’s easy to share live via Expo Go today and is prepared for APK builds later if you decide to distribute outside of the tunnel session.
+PS C:\Users\fxrge\skill-exchange> 
