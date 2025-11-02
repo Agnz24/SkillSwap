@@ -1,50 +1,77 @@
-# Welcome to your Expo app 👋
+SkillSwap — Skill‑barter mobile app (Expo + Supabase)
+SkillSwap is a barter‑inspired mobile app where users exchange skills by teaching and learning without money, featuring authentication, profiles, skills (offer/want), real‑time availability, and one‑tap booking.​
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Features
+Email/password authentication and session‑aware navigation that avoids cold‑start blank screens on Android/iOS.​
 
-## Get started
+Profile with display name/bio, skills offered and wanted, and live rating aggregation.​
 
-1. Install dependencies
+Real‑time availability slots and bookings synced via Supabase Realtime; “Browse & Book” with one‑tap book/cancel.​
 
-   ```bash
-   npm install
-   ```
+Themed UI with system light/dark support and consistent styling across tabs, inputs, and lists.​
 
-2. Start the app
+Shareable live demo via Expo Go Tunnel for zero‑cost testing.​
 
-   ```bash
-   npx expo start
-   ```
+Tech stack
+React Native (Expo 54), Expo Router, TypeScript, React Navigation, Reanimated, Gesture Handler.​
 
-In the output, you'll find options to open the app in a
+Supabase: Auth, Postgres (RLS), Realtime channels for live updates.​
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Project structure
+app/ — Expo Router file‑based navigation (tabs, auth, profile, browse & book, inbox).​
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+theme/ — useAppTheme hook and centralized Colors palette.​
 
-## Get a fresh project
+lib/supabase.ts — Supabase client setup and helpers.​
 
-When you're ready, run:
+components/ — Reusable UI (lists, badges, forms) and hooks (useUnreadCount, subscriptions).​
 
-```bash
-npm run reset-project
-```
+Getting started
+Prerequisites
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Node.js LTS, Git, and the Expo CLI (npx expo).​
 
-## Learn more
+Install Expo Go on your phone (iOS App Store / Google Play).​
 
-To learn more about developing your project with Expo, look at the following resources:
+Install
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+npm install.​
 
-## Join the community
+Environment
 
-Join our community of developers creating universal apps.
+Create a .env file at the project root based on .env.example:​
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+SUPABASE_URL=https://YOURPROJECT.supabase.co.​
+
+SUPABASE_ANON_KEY=YOUR_PUBLIC_ANON_KEY.​
+
+The app reads values via Constants.expoConfig.extra when running with app.config.ts.​
+
+Run (live demo via Expo Go)
+
+npx expo start --tunnel.​
+
+Scan the QR with Expo Go (Android scanner inside app; iOS Camera works too), or click “Open in Expo Go” from the web DevTools.​
+
+Keep the terminal open; closing it stops the live link.​
+
+Key flows
+Auth: Email/password sign‑in/sign‑up; session is restored before navigation to prevent blank screens.​
+
+Skills: Users mark skills they offer and want; lists react to Supabase changes in real time.​
+
+Browse & Book: Lists upcoming availability from others; book/cancel in one tap; UI updates instantly from Realtime.​
+
+Profile & Ratings: Edit profile; average rating computed from feedback, updated live.​
+
+Inbox badge: Unread count hook with capped display (“99+”).​
+
+Configuration notes
+No secrets in source control; .env is ignored by Git and an example file is provided.​
+
+If you later build APKs, increment android.versionCode and manage secrets with EAS; not required for Expo Go usage.​
+
+Troubleshooting
+Android blank page after QR: use --tunnel, clear caches (npx expo start -c), ensure session‑aware route guards.​
+
+Tunnel not opening for a tester: update Expo Go, use the clickable “Open in Expo Go” link, or restart with --port 8083
